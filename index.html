@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ai-Digital Well-being</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #e2e2ea;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
+    aside {
+      width: 240px;
+      background: #0d0d14;
+      border-right: 1px solid #1a1a28;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 16px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: #4ade80;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .logo-text .t1 { font-size: 14px; font-weight: 700; color: #fff; }
+    .logo-text .t2 { font-size: 11px; color: #555; }
+
+    .deep-work-card {
+      background: #13131f;
+      border: 1px solid #1e1e2e;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .dw-title { font-size: 12px; font-weight: 600; color: #ccc; }
+    .dw-sub { font-size: 10px; color: #444; margin-top: 2px; margin-bottom: 10px; }
+    .dw-row { display: flex; align-items: center; justify-content: space-between; }
+    .toggle { position: relative; width: 38px; height: 20px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0;
+      background: #2a2a3e; border-radius: 20px;
+      cursor: pointer; transition: 0.3s;
+    }
+    .slider:before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%; transition: 0.3s;
+    }
+    input:checked + .slider { background: #4ade80; }
+    input:checked + .slider:before { transform: translateX(18px); }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    nav a:hover { background: #13131f; color: #bbb; }
+    nav a.active {
+      background: #1a2e1a;
+      color: #4ade80;
+      border-color: #2d4d2d;
+    }
+    nav a .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 10px;
+      color: #333;
+      padding: 8px 10px;
+      line-height: 1.6;
+    }
+    .sidebar-footer a { color: #4ade80; text-decoration: none; }
+
+    /* ===== MAIN ===== */
+    main { flex: 1; overflow-y: auto; padding: 32px 36px; background: #0a0a0f; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .page-sub { font-size: 13px; color: #444; margin-bottom: 28px; }
+
+    /* ===== STAT CARDS ===== */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #11111b;
+      border: 1px solid #1c1c2e;
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+    }
+    .stat-card .sc-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stat-card .sc-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      color: #e2e2ea;
+    }
+    .sc-icon { font-size: 16px; }
+
+    /* ===== CHART CARDS ===== */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .chart-card {
+      background: #11111b;
+      border: 1px solid #1c1c2e;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .chart-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e2ea;
+      margin-bottom: 16px;
+    }
+    .empty-chart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      gap: 10px;
+    }
+    .empty-icon { font-size: 36px; opacity: 0.15; }
+    .empty-text { font-size: 13px; color: #333; }
+    .empty-sub { font-size: 11px; color: #2a2a3a; }
+
+    /* ===== LOG ACTIVITY PAGE ===== */
+    .log-section {
+      background: #11111b;
+      border: 1px solid #1c1c2e;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .log-section .ls-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 14px;
+    }
+    .activity-input {
+      width: 100%;
+      background: #0d0d18;
+      border: 1px solid #1e1e2e;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #e2e2ea;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .activity-input::placeholder { color: #333; }
+    .activity-input:focus { border-color: #4ade8050; }
+
+    /* Circular Timer */
+    .timer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      gap: 20px;
+    }
+    .timer-ring-wrap {
+      position: relative;
+      width: 160px; height: 160px;
+    }
+    .timer-ring {
+      width: 160px; height: 160px;
+      transform: rotate(-90deg);
+    }
+    .timer-ring .ring-bg {
+      fill: none;
+      stroke: #1e1e2e;
+      stroke-width: 6;
+    }
+    .timer-ring .ring-fill {
+      fill: none;
+      stroke: #4ade80;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1s linear;
+    }
+    .timer-display {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+      color: #666;
+      letter-spacing: 2px;
+    }
+    .timer-display.running { color: #e2e2ea; }
+    .timer-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid #2a2a3a;
+      background: #13131f;
+      color: #666;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .timer-btn.ready { color: #4ade80; border-color: #4ade8040; background: #1a2e1a; }
+    .timer-btn.active-btn { color: #f87171; border-color: #f8717140; background: #2e1a1a; }
+    .timer-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Semantic detection */
+    .semantic-card {
+      background: #11111b;
+      border: 1px solid #1c1c2e;
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .semantic-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .semantic-row {
+      font-size: 12px;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .sem-productive { color: #4ade80; font-weight: 600; }
+    .sem-learning { color: #60a5fa; font-weight: 600; }
+    .sem-distraction { color: #f87171; font-weight: 600; }
+    .sem-keywords { color: #555; }
+
+    /* ===== CAREER ROADMAP ===== */
+    .career-header-card {
+      background: #11111b;
+      border: 1px solid #1c1c2e;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .role-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .role-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #1e1e2e;
+      background: #0d0d14;
+      color: #555;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .role-btn.active { background: #4ade8015; color: #4ade80; border-color: #4ade8040; }
+    .level-tag {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #4ade8015;
+      color: #4ade80;
+      border: 1px solid #4ade8030;
+      margin-bottom: 8px;
+    }
+    .career-role-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .career-xp-text { font-size: 12px; color: #555; margin-bottom: 14px; }
+    .progress-bar {
+      background: #1a1a2e;
+      border-radius: 20px;
+      height: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #4ade80, #22d3ee);
+      transition: width 0.6s ease;
+    }
+    .milestone-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .milestone-item {
+      background: #0d0d14;
+      border: 1px solid #1a1a28;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .milestone-item.done { border-color: #4ade8030; background: #0d1a0d; }
+    .milestone-item.done .mi-hours { color: #4ade80; }
+    .milestone-item.done .mi-label { color: #4ade8088; }
+    .mi-hours { font-size: 18px; font-weight: 700; color: #333; font-family: monospace; margin-bottom: 4px; }
+    .mi-label { font-size: 11px; color: #333; }
+    .mi-check { font-size: 10px; margin-top: 4px; color: #4ade80; }
+
+    /* ===== HISTORY ===== */
+    .history-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #1e1e2e;
+      background: #11111b;
+      color: #555;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .filter-btn.active { background: #4ade8015; color: #4ade80; border-color: #4ade8040; }
+    .history-item {
+      background: #11111b;
+      border: 1px solid #1c1c2e;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hi-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #ccc;
+      max-width: 55%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hi-date { font-size: 11px; color: #444; margin-top: 3px; }
+    .hi-right { display: flex; align-items: center; gap: 10px; }
+    .hi-dur { font-size: 13px; font-family: monospace; color: #555; }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .badge.productive { background: #4ade8015; color: #4ade80; border: 1px solid #4ade8030; }
+    .badge.learning { background: #60a5fa15; color: #60a5fa; border: 1px solid #60a5fa30; }
+    .badge.distraction { background: #f8717115; color: #f87171; border: 1px solid #f8717130; }
+
+    /* ===== NUDGE OVERLAY ===== */
+    #nudge-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(16px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      text-align: center;
+    }
+    #nudge-overlay.show { display: flex; }
+    .nudge-icon { font-size: 52px; }
+    .nudge-title { font-size: 24px; font-weight: 700; color: #fff; }
+    .nudge-sub { font-size: 14px; color: #555; max-width: 380px; line-height: 1.7; }
+    .nudge-countdown {
+      font-size: 48px;
+      font-weight: 700;
+      color: #f87171;
+      font-family: monospace;
+      min-height: 60px;
+    }
+    .nudge-intention {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 380px;
+    }
+    .nudge-intention.show { display: flex; }
+    .nudge-intention p { font-size: 13px; color: #888; }
+    .nudge-input {
+      width: 100%;
+      background: #13131f;
+      border: 1px solid #2a2a3e;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #e2e2ea;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+    }
+    .nudge-proceed {
+      padding: 12px 28px;
+      background: #4ade8020;
+      color: #4ade80;
+      border: 1px solid #4ade8050;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .nudge-proceed:hover { background: #4ade8030; }
+
+    /* ===== BLOCKED OVERLAY ===== */
+    #blocked-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(16px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+    #blocked-overlay.show { display: flex; }
+    .blocked-icon { font-size: 52px; }
+    .blocked-title { font-size: 26px; font-weight: 700; color: #f87171; }
+    .blocked-sub { font-size: 14px; color: #555; max-width: 380px; line-height: 1.7; }
+    .blocked-btn {
+      padding: 12px 28px;
+      background: #4ade8020;
+      color: #4ade80;
+      border: 1px solid #4ade8050;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside>
+  <div class="logo-block">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-text">
+      <div class="t1">AI Career</div>
+      <div class="t2">Tracker</div>
+    </div>
+  </div>
+
+  <div class="deep-work-card">
+    <div class="dw-title">Deep Work</div>
+    <div class="dw-sub" id="dw-sub-text">Enforcement off</div>
+    <div class="dw-row">
+      <label class="toggle">
+        <input type="checkbox" id="deep-work-cb" onchange="toggleDeepWork(this.checked)"/>
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <nav>
+    <a class="active" onclick="showPage('dashboard', this)">
+      <span class="nav-icon">⊞</span> Dashboard
+    </a>
+    <a onclick="showPage('log', this)">
+      <span class="nav-icon">⊕</span> Log Activity
+    </a>
+    <a onclick="showPage('career', this)">
+      <span class="nav-icon">⊙</span> Career Roadmap
+    </a>
+    <a onclick="showPage('history', this)">
+      <span class="nav-icon">↺</span> History
+    </a>
+  </nav>
+
+  <div class="sidebar-footer" style="
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+">
+  © 2026. Developed by Pushpa
+</div>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="page active">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub">Your productivity at a glance</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="sc-label">TOTAL FOCUS <span class="sc-icon" style="color:#4ade80">⏱</span></div>
+        <div class="sc-value" id="stat-focus">0s</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">LEARNING <span class="sc-icon" style="color:#60a5fa">ℹ</span></div>
+        <div class="sc-value" id="stat-learning">0s</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">DISTRACTION <span class="sc-icon" style="color:#f87171">🔥</span></div>
+        <div class="sc-value" id="stat-distraction">0s</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">SESSIONS <span class="sc-icon" style="color:#facc15">◎</span></div>
+        <div class="sc-value" id="stat-sessions">0</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Productivity Ratio</h3>
+        <div id="ratio-wrap">
+          <div class="empty-chart">
+            <div class="empty-icon">◎</div>
+            <div class="empty-text">No data yet</div>
+            <div class="empty-sub">Log your first activity</div>
+          </div>
+        </div>
+        <canvas id="ratio-chart" style="display:none" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>7-Day Focus Trend</h3>
+        <div id="trend-wrap">
+          <div class="empty-chart">
+            <div class="empty-icon">⏱</div>
+            <div class="empty-text">No data for the past 7 days</div>
+          </div>
+        </div>
+        <canvas id="trend-chart" style="display:none" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG ACTIVITY -->
+  <div id="log" class="page">
+    <div class="page-title">Log Activity</div>
+    <div class="page-sub">Track what you're working on, second by second.</div>
+
+    <div class="log-section">
+      <div class="ls-label">WHAT ARE YOU WORKING ON?</div>
+      <input
+        type="text"
+        class="activity-input"
+        id="activity-input"
+        placeholder="e.g. React tutorial on Udemy, VSCode project..."
+        oninput="onActivityInput(this.value)"
+      />
+    </div>
+
+    <div class="log-section">
+      <div class="timer-section">
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" viewBox="0 0 160 160">
+            <circle class="ring-bg" cx="80" cy="80" r="70"/>
+            <circle class="ring-fill" id="ring-fill" cx="80" cy="80" r="70"/>
+          </svg>
+          <div class="timer-display" id="timer-display">00 : 00</div>
+        </div>
+        <button class="timer-btn" id="timer-btn" onclick="toggleTimer()" disabled>
+          ▶ Start Timer
+        </button>
+      </div>
+    </div>
+
+    <div class="semantic-card">
+      <div class="semantic-title">💡 Semantic Detection</div>
+      <div class="semantic-row">
+        <span class="sem-productive">Productive:</span>
+        <span class="sem-keywords"> vscode, figma, notion, work, design, build...</span>
+      </div>
+      <div class="semantic-row">
+        <span class="sem-learning">Learning:</span>
+        <span class="sem-keywords"> tutorial, course, docs, stackoverflow, python...</span>
+      </div>
+      <div class="semantic-row">
+        <span class="sem-distraction">Distraction:</span>
+        <span class="sem-keywords"> netflix, youtube, reddit, gaming, tiktok...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAREER ROADMAP -->
+  <div id="career" class="page">
+    <div class="page-title">Career Roadmap</div>
+    <div class="page-sub">Track your progress toward your career goal.</div>
+
+    <div class="career-header-card">
+      <div class="role-selector">
+        <button class="role-btn active" onclick="selectRole('Software Developer', this)">Software Developer</button>
+        <button class="role-btn" onclick="selectRole('Data Scientist', this)">Data Scientist</button>
+        <button class="role-btn" onclick="selectRole('UI/UX Designer', this)">UI/UX Designer</button>
+        <button class="role-btn" onclick="selectRole('DevOps Engineer', this)">DevOps Engineer</button>
+      </div>
+      <div class="level-tag" id="career-level-tag">Beginner</div>
+      <div class="career-role-name" id="career-role-name">Software Developer</div>
+      <div class="career-xp-text" id="career-xp-text">0.0h / 10h to next level</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="career-prog-fill" style="width:0%"></div>
+      </div>
+      <div class="milestone-grid">
+        <div class="milestone-item" id="ms-1">
+          <div class="mi-hours">10h</div>
+          <div class="mi-label">Novice</div>
+        </div>
+        <div class="milestone-item" id="ms-2">
+          <div class="mi-hours">25h</div>
+          <div class="mi-label">Apprentice</div>
+        </div>
+        <div class="milestone-item" id="ms-3">
+          <div class="mi-hours">50h</div>
+          <div class="mi-label">Practitioner</div>
+        </div>
+        <div class="milestone-item" id="ms-4">
+          <div class="mi-hours">100h</div>
+          <div class="mi-label">Professional</div>
+        </div>
+        <div class="milestone-item" id="ms-5">
+          <div class="mi-hours">200h</div>
+          <div class="mi-label">Expert</div>
+        </div>
+        <div class="milestone-item" id="ms-6">
+          <div class="mi-hours">500h</div>
+          <div class="mi-label">Master</div>
+          <div class="mi-check" style="display:none">✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="history" class="page">
+    <div class="page-title">History</div>
+    <div class="page-sub">Your past activity sessions.</div>
+
+    <div class="history-filters">
+      <button class="filter-btn active" onclick="filterHistory('all', this)">All</button>
+      <button class="filter-btn" onclick="filterHistory('productive', this)">Productive</button>
+      <button class="filter-btn" onclick="filterHistory('learning', this)">Learning</button>
+      <button class="filter-btn" onclick="filterHistory('distraction', this)">Distraction</button>
+    </div>
+    <div id="history-list">
+      <div style="color:#333;font-size:13px;padding:30px 0;text-align:center">
+        No sessions yet. Start logging activity to see history.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- NUDGE OVERLAY -->
+<div id="nudge-overlay">
+  <div class="nudge-icon">😮‍💨</div>
+  <div class="nudge-title">Take a breath...</div>
+  <div class="nudge-sub" id="nudge-app-name">You're about to open a distraction. Pause for a moment.</div>
+  <div class="nudge-countdown" id="nudge-countdown">5</div>
+  <div class="nudge-intention" id="nudge-intention">
+    <p>Type a 5-word intention to continue (e.g. "I am taking a break")</p>
+    <input type="text" class="nudge-input" id="nudge-input" placeholder="I am taking a break..." />
+    <button class="nudge-proceed" onclick="proceedFromNudge()">Continue</button>
+  </div>
+</div>
+
+<!-- BLOCKED OVERLAY -->
+<div id="blocked-overlay">
+  <div class="blocked-icon">🔒</div>
+  <div class="blocked-title">Focus is currently locked</div>
+  <div class="blocked-sub" id="blocked-msg">Deep Work mode is ON. This distraction is blocked.</div>
+  <button class="blocked-btn" onclick="document.getElementById('blocked-overlay').classList.remove('show')">
+    Got it, back to work
+  </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+/* =========================================================
+   AI DIGITAL WELL-BEING
+   Renderer / Frontend Logic
+   ========================================================= */
+
+'use strict';
+
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+
+let currentActivity = '';
+let currentCategory = 'productive';
+let deepWork = false;
+
+let allHistory = [];
+let historyFilter = 'all';
+
+let ratioChart = null;
+let trendChart = null;
+
+let nudgeTimer = null;
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function getElement(id) {
+  return document.getElementById(id);
+}
+
+function setText(id, value) {
+  const element = getElement(id);
+  if (element) {
+    element.textContent = String(value);
+  }
+}
+
+function fmt(seconds) {
+  const value = Math.max(0, Math.round(Number(seconds) || 0));
+
+  if (value >= 3600) {
+    return `${Math.floor(value / 3600)}h ${Math.floor((value % 3600) / 60)}m`;
+  }
+
+  if (value >= 60) {
+    return `${Math.floor(value / 60)}m ${value % 60}s`;
+  }
+
+  return `${value}s`;
+}
+
+function fmtTimer(seconds) {
+  const value = Math.max(0, Math.floor(Number(seconds) || 0));
+  const minutes = Math.floor(value / 60);
+  const secondsPart = value % 60;
+
+  return `${String(minutes).padStart(2, '0')} : ${String(secondsPart).padStart(2, '0')}`;
+}
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+
+/* =========================================================
+   CATEGORY DETECTION
+   ========================================================= */
+
+function categorize(text) {
+  const value = String(text || '').toLowerCase();
+
+  const learningKeywords = [
+    'code',
+    'vscode',
+    'python',
+    'tutorial',
+    'docs',
+    'stackoverflow',
+    'github',
+    'udemy',
+    'coursera',
+    'documentation',
+    'java',
+    'javascript',
+    'html',
+    'css',
+    'react',
+    'node',
+    'programming',
+    'leetcode',
+    'hackerrank'
+  ];
+
+  const distractionKeywords = [
+    'netflix',
+    'youtube',
+    'facebook',
+    'instagram',
+    'reddit',
+    'tiktok',
+    'gaming',
+    'twitch',
+    'spotify',
+    'twitter',
+    'reels',
+    'comedy',
+    'trailer',
+    'movie',
+    'series',
+    'meme',
+    'snapchat'
+  ];
+
+  if (learningKeywords.some(keyword => value.includes(keyword))) {
+    return 'learning';
+  }
+
+  if (distractionKeywords.some(keyword => value.includes(keyword))) {
+    return 'distraction';
+  }
+
+  return 'productive';
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function showPage(id, element) {
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.remove('active');
+  });
+
+  document.querySelectorAll('nav a').forEach(link => {
+    link.classList.remove('active');
+  });
+
+  const page = getElement(id);
+
+  if (page) {
+    page.classList.add('active');
+  }
+
+  if (element) {
+    element.classList.add('active');
+  }
+
+  if (id === 'dashboard') {
+    loadDashboard();
+  }
+
+  if (id === 'career') {
+    loadCareer();
+  }
+
+  if (id === 'history') {
+    renderHistory(historyFilter);
+  }
+}
+
+
+/* =========================================================
+   LOG ACTIVITY / MANUAL TIMER
+   ========================================================= */
+
+function onActivityInput(value) {
+  currentActivity = String(value || '').trim();
+
+  const button = getElement('timer-btn');
+
+  if (!button) {
+    return;
+  }
+
+  if (currentActivity) {
+    button.disabled = false;
+    button.className = 'timer-btn ready';
+    button.innerHTML = '▶ Start Timer';
+  } else {
+    button.disabled = true;
+    button.className = 'timer-btn';
+    button.innerHTML = '▶ Start Timer';
+  }
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    stopTimer();
+  } else {
+    startTimer();
+  }
+}
+
+function startTimer() {
+  if (!currentActivity) {
+    return;
+  }
+
+  currentCategory = categorize(currentActivity);
+
+  if (currentCategory === 'distraction' && !deepWork) {
+    showNudge(currentActivity);
+    return;
+  }
+
+  if (currentCategory === 'distraction' && deepWork) {
+    setText(
+      'blocked-msg',
+      `"${currentActivity}" is blocked. Focus is currently locked.`
+    );
+
+    const overlay = getElement('blocked-overlay');
+
+    if (overlay) {
+      overlay.classList.add('show');
+    }
+
+    return;
+  }
+
+  beginTimer();
+}
+
+function beginTimer() {
+  if (timerRunning) {
+    return;
+  }
+
+  timerRunning = true;
+  timerSeconds = 0;
+
+  const button = getElement('timer-btn');
+
+  if (button) {
+    button.disabled = false;
+    button.className = 'timer-btn active-btn';
+    button.innerHTML = '⏹ Stop & Save';
+  }
+
+  const display = getElement('timer-display');
+
+  if (display) {
+    display.classList.add('running');
+    display.textContent = '00 : 00';
+  }
+
+  const ring = getElement('ring-fill');
+  const circumference = 440;
+
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+
+  timerInterval = setInterval(() => {
+    timerSeconds += 1;
+
+    if (display) {
+      display.textContent = fmtTimer(timerSeconds);
+    }
+
+    if (ring) {
+      const progress = (timerSeconds % 60) / 60;
+      ring.style.strokeDashoffset =
+        circumference - (progress * circumference);
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (!timerRunning) {
+    return;
+  }
+
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  timerRunning = false;
+
+  if (timerSeconds >= 2) {
+    saveManualRecord({
+      app_name: currentActivity,
+      category: currentCategory,
+      duration: timerSeconds,
+      date: today(),
+      timestamp: Date.now()
+    });
+  }
+
+  timerSeconds = 0;
+
+  const display = getElement('timer-display');
+
+  if (display) {
+    display.textContent = '00 : 00';
+    display.classList.remove('running');
+  }
+
+  const ring = getElement('ring-fill');
+
+  if (ring) {
+    ring.style.strokeDashoffset = 440;
+  }
+
+  const button = getElement('timer-btn');
+
+  if (button) {
+    button.className = 'timer-btn';
+    button.innerHTML = '▶ Start Timer';
+    button.disabled = true;
+  }
+
+  const input = getElement('activity-input');
+
+  if (input) {
+    input.value = '';
+  }
+
+  currentActivity = '';
+}
+
+
+/* =========================================================
+   MANUAL SESSION STORAGE
+   ========================================================= */
+
+function getManualSessions() {
+  try {
+    const data = localStorage.getItem('manualSessions');
+    const parsed = data ? JSON.parse(data) : [];
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error('Could not read manual sessions:', error);
+    return [];
+  }
+}
+
+function saveManualRecord(record) {
+  try {
+    const sessions = getManualSessions();
+
+    sessions.push(record);
+
+    localStorage.setItem(
+      'manualSessions',
+      JSON.stringify(sessions)
+    );
+
+    console.log('Manual session saved:', record);
+
+    loadDashboard();
+
+    if (getElement('history')?.classList.contains('active')) {
+      renderHistory(historyFilter);
+    }
+  } catch (error) {
+    console.error('Could not save manual session:', error);
+  }
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+async function loadDashboard() {
+  try {
+    let productive = 0;
+    let learning = 0;
+    let distraction = 0;
+    let automaticSessionCount = 0;
+
+    /*
+      Automatic active-window sessions come from Electron/NeDB.
+    */
+    if (
+      window.api &&
+      typeof window.api.getStats === 'function'
+    ) {
+      const stats = await window.api.getStats();
+
+      if (Array.isArray(stats)) {
+        stats.forEach(item => {
+          const total = Number(item.total) || 0;
+
+          if (item.category === 'productive') {
+            productive += total;
+          } else if (item.category === 'learning') {
+            learning += total;
+          } else if (item.category === 'distraction') {
+            distraction += total;
+          }
+        });
+      }
+    }
+
+    /*
+      Manual timer sessions are stored in renderer localStorage.
+      Include today's records in the dashboard too.
+    */
+    const manualToday = getManualSessions().filter(
+      session => session.date === today()
+    );
+
+    manualToday.forEach(session => {
+      const duration = Number(session.duration) || 0;
+
+      if (session.category === 'productive') {
+        productive += duration;
+      } else if (session.category === 'learning') {
+        learning += duration;
+      } else if (session.category === 'distraction') {
+        distraction += duration;
+      }
+    });
+
+    if (
+      window.api &&
+      typeof window.api.getHistory === 'function'
+    ) {
+      const history = await window.api.getHistory();
+
+      if (Array.isArray(history)) {
+        automaticSessionCount = history.length;
+      }
+    }
+
+    setText('stat-focus', fmt(productive + learning));
+    setText('stat-learning', fmt(learning));
+    setText('stat-distraction', fmt(distraction));
+
+    setText(
+      'stat-sessions',
+      automaticSessionCount + manualToday.length
+    );
+
+    renderRatioChart(
+      productive,
+      learning,
+      distraction
+    );
+
+    if (
+      window.api &&
+      typeof window.api.get7Day === 'function'
+    ) {
+      const trendData = await window.api.get7Day();
+
+      renderTrendChart(
+        Array.isArray(trendData) ? trendData : []
+      );
+    } else {
+      renderTrendChartLocal(getManualSessions());
+    }
+  } catch (error) {
+    console.error('Dashboard loading error:', error);
+  }
+}
+
+
+/* =========================================================
+   PRODUCTIVITY RATIO CHART
+   ========================================================= */
+
+function renderRatioChart(
+  productive,
+  learning,
+  distraction
+) {
+  const wrap = getElement('ratio-wrap');
+  const canvas = getElement('ratio-chart');
+
+  if (!wrap || !canvas) {
+    return;
+  }
+
+  const total =
+    Number(productive || 0) +
+    Number(learning || 0) +
+    Number(distraction || 0);
+
+  if (
+    total <= 0 ||
+    typeof Chart === 'undefined'
+  ) {
+    wrap.style.display = '';
+    canvas.style.display = 'none';
+
+    return;
+  }
+
+  wrap.style.display = 'none';
+  canvas.style.display = 'block';
+
+  if (ratioChart) {
+    ratioChart.destroy();
+  }
+
+  ratioChart = new Chart(
+    canvas.getContext('2d'),
+    {
+      type: 'doughnut',
+
+      data: {
+        labels: [
+          'Productive',
+          'Learning',
+          'Distraction'
+        ],
+
+        datasets: [
+          {
+            data: [
+              productive,
+              learning,
+              distraction
+            ],
+
+            backgroundColor: [
+              '#4ade80',
+              '#60a5fa',
+              '#f87171'
+            ],
+
+            borderWidth: 0,
+
+            hoverOffset: 4
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+
+        cutout: '68%',
+
+        plugins: {
+          legend: {
+            labels: {
+              color: '#666',
+
+              font: {
+                size: 11
+              },
+
+              padding: 16
+            }
+          }
+        }
+      }
+    }
+  );
+}
+
+
+/* =========================================================
+   7-DAY TREND
+   ========================================================= */
+
+function getLastSevenDays() {
+  const days = [];
+
+  for (let i = 6; i >= 0; i -= 1) {
+    const date = new Date();
+
+    date.setDate(date.getDate() - i);
+
+    days.push(
+      date.toISOString().split('T')[0]
+    );
+  }
+
+  return days;
+}
+
+function renderTrendChart(data) {
+  const rows = Array.isArray(data) ? data : [];
+  const days = getLastSevenDays();
+
+  const productive = days.map(day => {
+    const item = rows.find(
+      row =>
+        row.date === day &&
+        row.category === 'productive'
+    );
+
+    return item
+      ? Number(item.total) / 3600
+      : 0;
+  });
+
+  const learning = days.map(day => {
+    const item = rows.find(
+      row =>
+        row.date === day &&
+        row.category === 'learning'
+    );
+
+    return item
+      ? Number(item.total) / 3600
+      : 0;
+  });
+
+  renderTrendChartData(
+    days,
+    productive,
+    learning
+  );
+}
+
+function renderTrendChartLocal(sessions) {
+  const rows = Array.isArray(sessions)
+    ? sessions
+    : [];
+
+  const days = getLastSevenDays();
+
+  const productive = days.map(day =>
+    rows
+      .filter(
+        session =>
+          session.date === day &&
+          session.category === 'productive'
+      )
+      .reduce(
+        (sum, session) =>
+          sum + (Number(session.duration) || 0),
+        0
+      ) / 3600
+  );
+
+  const learning = days.map(day =>
+    rows
+      .filter(
+        session =>
+          session.date === day &&
+          session.category === 'learning'
+      )
+      .reduce(
+        (sum, session) =>
+          sum + (Number(session.duration) || 0),
+        0
+      ) / 3600
+  );
+
+  renderTrendChartData(
+    days,
+    productive,
+    learning
+  );
+}
+
+function renderTrendChartData(
+  days,
+  productive,
+  learning
+) {
+  const wrap = getElement('trend-wrap');
+  const canvas = getElement('trend-chart');
+
+  if (!wrap || !canvas) {
+    return;
+  }
+
+  const hasData =
+    [...productive, ...learning]
+      .some(value => Number(value) > 0);
+
+  if (
+    !hasData ||
+    typeof Chart === 'undefined'
+  ) {
+    wrap.style.display = '';
+    canvas.style.display = 'none';
+
+    return;
+  }
+
+  wrap.style.display = 'none';
+  canvas.style.display = 'block';
+
+  if (trendChart) {
+    trendChart.destroy();
+  }
+
+  trendChart = new Chart(
+    canvas.getContext('2d'),
+    {
+      type: 'line',
+
+      data: {
+        labels: days.map(
+          day => day.slice(5)
+        ),
+
+        datasets: [
+          {
+            label: 'Productive (h)',
+
+            data: productive,
+
+            borderColor: '#4ade80',
+
+            backgroundColor: '#4ade8015',
+
+            fill: true,
+
+            tension: 0.4,
+
+            pointRadius: 3
+          },
+
+          {
+            label: 'Learning (h)',
+
+            data: learning,
+
+            borderColor: '#60a5fa',
+
+            backgroundColor: '#60a5fa15',
+
+            fill: true,
+
+            tension: 0.4,
+
+            pointRadius: 3
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+
+        scales: {
+          x: {
+            ticks: {
+              color: '#444',
+              font: {
+                size: 11
+              }
+            },
+
+            grid: {
+              color: '#1a1a28'
+            }
+          },
+
+          y: {
+            beginAtZero: true,
+
+            ticks: {
+              color: '#444',
+              font: {
+                size: 11
+              }
+            },
+
+            grid: {
+              color: '#1a1a28'
+            }
+          }
+        },
+
+        plugins: {
+          legend: {
+            labels: {
+              color: '#666',
+
+              font: {
+                size: 11
+              },
+
+              padding: 16
+            }
+          }
+        }
+      }
+    }
+  );
+}
+
+
+/* =========================================================
+   CAREER ROADMAP
+   ========================================================= */
+
+function selectRole(name, button) {
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  if (button) {
+    button.classList.add('active');
+  }
+
+  setText(
+    'career-role-name',
+    name
+  );
+
+  loadCareer();
+}
+
+async function loadCareer() {
+  try {
+    if (
+      window.api &&
+      typeof window.api.getCareerXp === 'function'
+    ) {
+      const xp = await window.api.getCareerXp();
+
+      renderCareer(
+        Number(xp) || 0
+      );
+
+      return;
+    }
+
+    const total = getManualSessions()
+      .filter(
+        session =>
+          session.category === 'learning' ||
+          session.category === 'productive'
+      )
+      .reduce(
+        (sum, session) =>
+          sum + (Number(session.duration) || 0),
+        0
+      );
+
+    renderCareer(total);
+  } catch (error) {
+    console.error('Career loading error:', error);
+  }
+}
+
+function renderCareer(xpSeconds) {
+  const hours =
+    (Number(xpSeconds) || 0) / 3600;
+
+  const levels = [
+    {
+      name: 'Beginner',
+      min: 0,
+      max: 10
+    },
+    {
+      name: 'Novice',
+      min: 10,
+      max: 25
+    },
+    {
+      name: 'Apprentice',
+      min: 25,
+      max: 50
+    },
+    {
+      name: 'Practitioner',
+      min: 50,
+      max: 100
+    },
+    {
+      name: 'Professional',
+      min: 100,
+      max: 200
+    },
+    {
+      name: 'Expert',
+      min: 200,
+      max: 500
+    },
+    {
+      name: 'Master',
+      min: 500,
+      max: 500
+    }
+  ];
+
+  let current = levels[0];
+
+  for (const level of levels) {
+    if (hours >= level.min) {
+      current = level;
+    }
+  }
+
+  const percentage =
+    current.min === current.max
+      ? 100
+      : Math.min(
+          100,
+          Math.max(
+            0,
+            (
+              (hours - current.min) /
+              (current.max - current.min)
+            ) * 100
+          )
+        );
+
+  setText(
+    'career-level-tag',
+    current.name
+  );
+
+  setText(
+    'career-xp-text',
+    `${Math.round(hours * 10) / 10}h / ${current.max}h to next level`
+  );
+
+  const progress =
+    getElement('career-prog-fill');
+
+  if (progress) {
+    progress.style.width =
+      `${percentage}%`;
+  }
+
+  [
+    10,
+    25,
+    50,
+    100,
+    200,
+    500
+  ].forEach(
+    (requiredHours, index) => {
+      const milestone =
+        getElement(`ms-${index + 1}`);
+
+      if (!milestone) {
+        return;
+      }
+
+      milestone.classList.toggle(
+        'done',
+        hours >= requiredHours
+      );
+    }
+  );
+}
+
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+function filterHistory(category, button) {
+  historyFilter = category;
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  if (button) {
+    button.classList.add('active');
+  }
+
+  renderHistory(category);
+}
+
+async function renderHistory(category = 'all') {
+  try {
+    let rows = [];
+
+    if (
+      window.api &&
+      typeof window.api.getHistory === 'function'
+    ) {
+      const automaticRows =
+        await window.api.getHistory();
+
+      rows = Array.isArray(automaticRows)
+        ? automaticRows
+        : [];
+    }
+
+    // Include manually logged timer sessions.
+    rows = rows.concat(
+      getManualSessions()
+    );
+
+    allHistory = rows;
+
+    const filtered =
+      category === 'all'
+        ? rows
+        : rows.filter(
+            row =>
+              row.category === category
+          );
+
+    filtered.sort(
+      (a, b) =>
+        (Number(b.timestamp) || 0) -
+        (Number(a.timestamp) || 0)
+    );
+
+    _renderHistoryRows(filtered);
+  } catch (error) {
+    console.error(
+      'History loading error:',
+      error
+    );
+
+    _renderHistoryRows([]);
+  }
+}
+
+function _renderHistoryRows(rows) {
+  const element =
+    getElement('history-list');
+
+  if (!element) {
+    return;
+  }
+
+  if (
+    !Array.isArray(rows) ||
+    rows.length === 0
+  ) {
+    element.innerHTML =
+      '<div style="color:#333;font-size:13px;padding:30px 0;text-align:center">No sessions found.</div>';
+
+    return;
+  }
+
+  element.innerHTML =
+    rows
+      .slice(0, 50)
+      .map(row => {
+        const appName =
+          escapeHtml(
+            row.app_name ||
+            row.appName ||
+            'Unknown'
+          );
+
+        const date =
+          escapeHtml(
+            row.date || ''
+          );
+
+        const category =
+          escapeHtml(
+            row.category ||
+            'productive'
+          );
+
+        return `
+          <div class="history-item">
+            <div>
+              <div class="hi-name">
+                ${appName}
+              </div>
+
+              <div class="hi-date">
+                ${date}
+              </div>
+            </div>
+
+            <div class="hi-right">
+              <span class="hi-dur">
+                ${fmt(row.duration)}
+              </span>
+
+              <span class="badge ${category}">
+                ${category}
+              </span>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+}
+
+
+/* =========================================================
+   DEEP WORK
+   ========================================================= */
+
+async function toggleDeepWork(value) {
+  deepWork = Boolean(value);
+
+  setText(
+    'dw-sub-text',
+    deepWork
+      ? 'Enforcement on'
+      : 'Enforcement off'
+  );
+
+  try {
+    if (
+      window.api &&
+      typeof window.api.setDeepWork === 'function'
+    ) {
+      await window.api.setDeepWork(
+        deepWork
+      );
+    }
+  } catch (error) {
+    console.error(
+      'Deep Work error:',
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   NUDGE OVERLAY
+   ========================================================= */
+
+function showNudge(appName) {
+  const overlay =
+    getElement('nudge-overlay');
+
+  const appText =
+    getElement('nudge-app-name');
+
+  const countdown =
+    getElement('nudge-countdown');
+
+  const intention =
+    getElement('nudge-intention');
+
+  const input =
+    getElement('nudge-input');
+
+  if (!overlay) {
+    return;
+  }
+
+  if (appText) {
+    appText.textContent =
+      `You're about to log "${appName}". Pause for a moment.`;
+  }
+
+  if (countdown) {
+    countdown.textContent = '5';
+  }
+
+  if (intention) {
+    intention.classList.remove('show');
+  }
+
+  if (input) {
+    input.value = '';
+    input.style.borderColor = '';
+    input.placeholder =
+      'I am taking a break...';
+  }
+
+  overlay.classList.add('show');
+
+  if (nudgeTimer) {
+    clearInterval(nudgeTimer);
+  }
+
+  let count = 5;
+
+  nudgeTimer =
+    setInterval(() => {
+      count -= 1;
+
+      if (countdown) {
+        countdown.textContent =
+          count > 0
+            ? String(count)
+            : '';
+      }
+
+      if (count <= 0) {
+        clearInterval(nudgeTimer);
+        nudgeTimer = null;
+
+        if (intention) {
+          intention.classList.add('show');
+        }
+      }
+    }, 1000);
+}
+
+function proceedFromNudge() {
+  const input =
+    getElement('nudge-input');
+
+  if (!input) {
+    return;
+  }
+
+  const value =
+    input.value.trim();
+
+  const words =
+    value
+      .split(/\s+/)
+      .filter(word => word.length > 0);
+
+  if (words.length < 5) {
+    input.style.borderColor =
+      '#f87171';
+
+    input.placeholder =
+      'Please type at least 5 words...';
+
+    return;
+  }
+
+  const overlay =
+    getElement('nudge-overlay');
+
+  if (overlay) {
+    overlay.classList.remove('show');
+  }
+
+  beginTimer();
+}
+
+
+/* =========================================================
+   BLOCKED OVERLAY
+   ========================================================= */
+
+function closeBlockedOverlay() {
+  const overlay =
+    getElement('blocked-overlay');
+
+  if (overlay) {
+    overlay.classList.remove('show');
+  }
+
+  if (
+    window.api &&
+    typeof window.api.closeOverlay === 'function'
+  ) {
+    window.api.closeOverlay().catch(
+      error =>
+        console.error(
+          'Could not close Electron overlay:',
+          error
+        )
+    );
+  }
+}
+
+
+/* =========================================================
+   ELECTRON IPC LISTENERS
+   ========================================================= */
+
+function setupElectronListeners() {
+  if (!window.api) {
+    console.warn(
+      'Electron API is not available.'
+    );
+
+    return;
+  }
+
+  if (
+    typeof window.api.onActiveWindow ===
+    'function'
+  ) {
+    window.api.onActiveWindow(
+      payload => {
+        if (!payload) {
+          return;
+        }
+
+        const title =
+          payload.title || '';
+
+        const category =
+          payload.category ||
+          categorize(title);
+
+        console.log(
+          `Active window: ${title} | Category: ${category}`
+        );
+
+        /*
+          Do not overwrite the manual timer while it
+          is running.
+        */
+        if (!timerRunning) {
+          const input =
+            getElement('activity-input');
+
+          if (input && title) {
+            input.value = title;
+            onActivityInput(title);
+          }
+        }
+      }
+    );
+  }
+
+  if (
+    typeof window.api.onSessionSaved ===
+    'function'
+  ) {
+    window.api.onSessionSaved(
+      data => {
+        console.log(
+          'Automatic session saved:',
+          data
+        );
+
+        loadDashboard();
+
+        const historyPage =
+          getElement('history');
+
+        if (
+          historyPage &&
+          historyPage.classList.contains('active')
+        ) {
+          renderHistory(historyFilter);
+        }
+      }
+    );
+  }
+
+  if (
+    typeof window.api.onBlocked ===
+    'function'
+  ) {
+    window.api.onBlocked(
+      title => {
+        setText(
+          'blocked-msg',
+          `"${title}" is blocked. Deep Work mode is active.`
+        );
+
+        const overlay =
+          getElement('blocked-overlay');
+
+        if (overlay) {
+          overlay.classList.add('show');
+        }
+      }
+    );
+  }
+}
+
+
+/* =========================================================
+   START APPLICATION
+   ========================================================= */
+
+function initializeApp() {
+  setupElectronListeners();
+
+  loadDashboard();
+
+  // Refresh dashboard periodically.
+  setInterval(
+    loadDashboard,
+    5000
+  );
+}
+
+if (
+  document.readyState === 'loading'
+) {
+  document.addEventListener(
+    'DOMContentLoaded',
+    initializeApp
+  );
+} else {
+  initializeApp();
+}
+</script>
+
+</body>
+</html>
