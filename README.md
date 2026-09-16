@@ -147,3 +147,54 @@ Database location:
 ```text
 Windows:
 C:\Users\<YourUsername>\AppData\Roaming\Electron\career-tracker.db
+
+
+🚀 Installation
+Step 1: Install Node.js
+
+Install Node.js on your computer.
+
+Check whether Node.js is installed:
+
+node --version
+
+Check npm:
+
+npm --version
+
+The project requires a modern Node.js version compatible with the installed Electron version.
+
+Step 2: Clone the Repository
+
+If the project is hosted on GitHub:
+
+git clone <YOUR-GITHUB-REPOSITORY-URL>
+
+Move into the project folder:
+
+cd DIGITAL
+Step 3: Install Dependencies
+
+Run:
+
+npm install
+
+This installs all required packages from package.json.
+
+▶️ Running the Application
+
+Start the application using:
+
+npm run dev
+
+The Electron desktop application should open automatically.
+
+Alternative Start Command
+
+If the project contains the following script:
+
+"start": "electron main.js"
+
+you can also run:
+
+npm start
